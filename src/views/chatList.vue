@@ -4,7 +4,7 @@
     <div class="user-list">
       <div class="user" v-for="user in users" @click="selectUser(user.id)">
         <div class="user-info">
-          <div class="avatar" />
+          <div class="avatar"/>
           <h4>{{ user.name }}</h4>
         </div>
       </div>
@@ -15,7 +15,7 @@
         <div class="messages">
           <div class="messages-list" ref="scroll">
             <div :class="{'my-message' : getUser === message.uid }" class="message" v-for="message in messages">
-              <h4>{{message.message}}</h4>
+              <h4>{{ message.message }}</h4>
               <p></p>
             </div>
           </div>
@@ -38,10 +38,11 @@ import {doc, updateDoc, collection, onSnapshot, arrayUnion, getDoc} from "fireba
 import {db} from "@/main";
 import {useStore} from "vuex";
 import {getAuth} from "firebase/auth";
+
 export default {
   name: "chatList",
   components: {headerMain},
-  setup () {
+  setup() {
     let messages = ref(null)
     const users = ref([])
     let selectChatId = ref('')
@@ -71,26 +72,25 @@ export default {
       })
     }
 
-    const sendMessage =  () => {
-      try {
-        const chatRef = doc(db, 'chats', selectChatId.value);
-        if (messages.value){
-          updateDoc(chatRef,
-              { messages: arrayUnion({uid: getUser.value, message: message.value})
-              });
-          message.value = ''
-        }
-      }catch (e){}
+    const sendMessage = () => {
+      const chatRef = doc(db, 'chats', selectChatId.value);
+      if (messages.value) {
+        updateDoc(chatRef,
+            {
+              messages: arrayUnion({uid: getUser.value, message: message.value})
+            });
+        message.value = ''
+      }
     }
 
-    onUpdated( () => {
+    onUpdated(() => {
       scroll.value.scrollTop = 9999999999;
     })
 
     onMounted(async () => {
       onSnapshot(collection(db, "users"), (querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          if (doc.data().id !== getUser.value){
+          if (doc.data().id !== getUser.value) {
             users.value.push(
                 {
                   id: doc.data().id,
@@ -103,7 +103,6 @@ export default {
     })
 
 
-
     return {getUser, messages, sendMessage, message, scroll, users, selectUser, selectChatId}
   }
 }
@@ -111,15 +110,15 @@ export default {
 
 <style scoped>
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   width: 0;
 }
 
-p{
+p {
   margin: 0;
 }
 
-h4{
+h4 {
   font-family: 'Alike';
   font-style: normal;
   font-weight: 400;
@@ -130,7 +129,7 @@ h4{
 }
 
 
-.container{
+.container {
   display: grid;
   grid-template-columns: 288px 756px;
   width: 1044px;
@@ -139,23 +138,23 @@ h4{
 }
 
 .user-list,
-.messages-window{
+.messages-window {
   background: rgba(31, 31, 31, 0.5);
   border: 1px solid rgba(106, 106, 106, 0.3);
   backdrop-filter: blur(7.5px);
 }
 
-.user-list{
+.user-list {
   border-radius: 30px 0 0 30px;
   padding: 36px 16px;
 }
 
-.messages{
+.messages {
   position: relative;
   z-index: 0;
 }
 
-.messages-list{
+.messages-list {
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
@@ -164,12 +163,12 @@ h4{
   height: 58vh;
 }
 
-.messages-window{
+.messages-window {
   border-radius: 0 30px 30px 0;
   position: relative;
 }
 
-.message{
+.message {
   background: #1F1F1F;
   border: 1px solid rgba(106, 106, 106, 0.3);
   border-radius: 10px;
@@ -178,14 +177,14 @@ h4{
   align-self: start;
 }
 
-.my-message{
+.my-message {
   align-self: end;
   margin-left: 0;
   margin-right: 30px;
   background: #722CCB;
 }
 
-.apart-info{
+.apart-info {
   z-index: 1;
   width: 100%;
   background: #1F1F1F;
@@ -196,13 +195,13 @@ h4{
   border-radius: 0 30px 0 0;
 }
 
-.input-wrap{
+.input-wrap {
   position: absolute;
   left: 20px;
   bottom: 30px;
 }
 
-.input-message{
+.input-message {
   height: 57px;
   width: 696px;
   font-family: 'Alike';
@@ -213,7 +212,7 @@ h4{
   background: #1F1F1F;
 }
 
-.send{
+.send {
   border-radius: 10px;
   position: absolute;
   right: 16px;
@@ -221,13 +220,13 @@ h4{
   cursor: pointer;
 }
 
-.user-list{
+.user-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.user{
+.user {
   background: #1F1F1F;
   border: 1px solid rgba(106, 106, 106, 0.3);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -235,13 +234,13 @@ h4{
   padding: 11px 29px 12px 9px;
 }
 
-.user-info{
+.user-info {
   display: flex;
   align-items: center;
   gap: 9px;
 }
 
-.avatar{
+.avatar {
   background: #D9D9D9;
   border-radius: 100px;
   width: 36px;

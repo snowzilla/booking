@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -21,7 +21,7 @@ const db = getFirestore(app)
 
 const auth = getAuth()
 
-export { auth, db }
+export {auth, db}
 
 createApp(App)
     .use(store)

@@ -12,21 +12,22 @@
 import headerMain from "@/components/headerMain";
 import {onMounted, ref, computed} from "vue";
 import {db} from '@/main'
-import { collection, addDoc, onSnapshot } from "firebase/firestore";
+import {collection, addDoc, onSnapshot} from "firebase/firestore";
 import {useStore} from "vuex";
+
 export default {
-name: "profile",
+  name: "profile",
   components: {
-  headerMain
+    headerMain
   },
-  setup () {
+  setup() {
     const apartName = ref('')
 
     const store = useStore()
 
     const getUser = computed(() => store.state.user.uid)
 
-    const addApartments =  () => {
+    const addApartments = () => {
       addDoc(collection(db, "apartments"), {
         hotelName: apartName.value,
         owner: getUser.value,
@@ -52,7 +53,7 @@ name: "profile",
       });
     })
 
-    return {apartName, addApartments, getUser, }
+    return {apartName, addApartments, getUser,}
   }
 }
 </script>
@@ -60,12 +61,12 @@ name: "profile",
 <style scoped>
 
 
-.container{
+.container {
   display: grid;
   place-items: center;
 }
 
-.modal{
+.modal {
   width: 1044px;
   background: rgba(31, 31, 31, 0.5);
   border: 1px solid rgba(106, 106, 106, 0.3);
