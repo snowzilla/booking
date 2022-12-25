@@ -34,7 +34,7 @@
 </template>
 
 <script >
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUpdated, ref} from "vue";
 import {collection, getDocs} from "firebase/firestore";
 import {db} from "@/main";
 import {useStore} from "vuex";
@@ -61,6 +61,7 @@ export default {
     })
 
     const exit = async () => {
+        name.value = ''
         await store.dispatch('logout' )
         await router.push('/')
     }

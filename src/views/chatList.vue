@@ -2,22 +2,10 @@
   <header-main/>
   <div class="container">
     <div class="user-list">
-      <div class="user">
+      <div class="user" v-for="user in users" @click="selectUser(user.id)">
         <div class="user-info">
-          <div class="avatar"/>
-          <h4>Sergey</h4>
-        </div>
-      </div>
-      <div class="user">
-        <div class="user-info">
-          <div class="avatar"/>
-          <h4>Sergey</h4>
-        </div>
-      </div>
-      <div class="user">
-        <div class="user-info">
-          <div class="avatar"/>
-          <h4>Sergey</h4>
+          <div class="avatar" />
+          <h4>{{ user.name }}</h4>
         </div>
       </div>
     </div>
@@ -46,7 +34,7 @@
 <script>
 import headerMain from "@/components/headerMain";
 import {computed, onMounted, ref, onUpdated} from "vue";
-import {doc, updateDoc, collection, onSnapshot, arrayUnion} from "firebase/firestore";
+import {doc, updateDoc, collection, onSnapshot, arrayUnion, getDoc} from "firebase/firestore";
 import {db} from "@/main";
 import {useStore} from "vuex";
 import {getAuth} from "firebase/auth";
@@ -55,7 +43,9 @@ export default {
   components: {headerMain},
   setup () {
     let messages = ref(null)
-    let chatId = ''
+    const users = ref([])
+    let selectChatId = ref('')
+
 
     const scroll = ref(null)
     const message = ref('')
@@ -68,10 +58,22 @@ export default {
       }
     });
 
+    const selectUser = async (id) => {
+      onSnapshot(collection(db, "chats"), (querySnapshot) => {
+        querySnapshot.forEach((item) => {
+          if (item.data().users.owner === id || item.data().users.buyer === id) {
+            onSnapshot(doc(db, "chats", item.id), (doc) => {
+              selectChatId.value = doc.id
+              messages.value = doc.data().messages
+            });
+          }
+        });
+      })
+    }
 
     const sendMessage =  () => {
       try {
-        const chatRef = doc(db, 'chats', chatId);
+        const chatRef = doc(db, 'chats', selectChatId.value);
         if (messages.value){
           updateDoc(chatRef,
               { messages: arrayUnion({uid: getUser.value, message: message.value})
@@ -82,24 +84,27 @@ export default {
     }
 
     onUpdated( () => {
-      scroll.value.scrollTop = 9999999999
+      scroll.value.scrollTop = 9999999999;
     })
-
 
     onMounted(async () => {
-      onSnapshot(collection(db, "chats"), (querySnapshot) => {
+      onSnapshot(collection(db, "users"), (querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          if (doc.data().users.owner === getUser.value || doc.data().users.buyer === getUser.value) {
-            chatId = doc.id
-            messages.value = doc.data().messages
+          if (doc.data().id !== getUser.value){
+            users.value.push(
+                {
+                  id: doc.data().id,
+                  name: doc.data().name
+                }
+            )
           }
-        });
-      });
+        })
+      })
     })
 
 
 
-    return {getUser, messages, sendMessage, message, scroll}
+    return {getUser, messages, sendMessage, message, scroll, users, selectUser, selectChatId}
   }
 }
 </script>

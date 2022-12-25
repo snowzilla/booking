@@ -26,7 +26,7 @@
 import store from "@/store";
 import router from "@/router";
 import headerMain from "@/components/headerMain";
-import {addDoc, collection} from "firebase/firestore";
+import {addDoc, collection, onSnapshot} from "firebase/firestore";
 import {db} from "@/main";
 export default {
   components: {
@@ -37,7 +37,8 @@ export default {
       item: {},
       country: '',
       name: '',
-      loading: false
+      loading: false,
+      userId: []
     }
   },
   computed: {
@@ -48,44 +49,45 @@ export default {
       return store.state.user
     }
   },
-  mounted() {
-    this.hotels.forEach( item => {
-      if ( +item.hotelId === +this.$route.params.id) {
+   mounted() {
+    this.hotels.forEach(item => {
+      if (+item.hotelId === +this.$route.params.id) {
         this.item = item
         this.name = item.location.name
         this.country = item.location.country
       }
-    })
+    });
+    onSnapshot(collection(db, "chats"), (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.data().hasOwnProperty('users')) {
+          Object.values(doc.data().users).forEach( id => {
+            if (this.user.uid === id) {
+              this.userId = id
+            }
+          })
+        }
+      })
+    });
   },
   methods: {
-    load () {
+      load() {
 
-      if (this.item.apart) {
-          addDoc(collection(db, "chats"), {
-            users: {
-              owner: this.item.owner,
-              buyer: this.user.uid
-            },
-            messages: []
-          });
-        router.push("/chatList")
-      } else {
+       if (this.user.uid !== this.item.owner) {
 
-        // if (this.$refs.btn.innerHTML === 'Completed'){
-        //   return
-        // }
-        //
-        // if (!this.loading) {
-        //   this.loading = true
-        // }
-        //
-        // setTimeout( () => {
-        //   this.loading = false
-        //   // this.$refs.btn.innerHTML = 'Completed'
-        //   alert("Nice job, let's goooooo")
-        // }, 3000)
-      }
-    }
+         if (!this.userId.length) {
+           if (this.item.apart) {
+             addDoc(collection(db, "chats"), {
+               users: {
+                 owner: this.item.owner,
+                 buyer: this.user.uid
+               },
+               messages: []
+             });
+             router.push("/chatList")
+           }
+         }
+       }
+     }
   }
 }
 

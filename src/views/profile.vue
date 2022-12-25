@@ -30,9 +30,9 @@ name: "profile",
       addDoc(collection(db, "apartments"), {
         hotelName: apartName.value,
         owner: getUser.value,
-        hotelId: '12',
+        hotelId: Math.floor(Math.random() * 999999999),
         apart: true,
-        priceForm: '1234',
+        priceFrom: '1234',
         location: {
           name: 'Moscow',
           country: 'Russia'

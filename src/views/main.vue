@@ -32,7 +32,7 @@ import HeaderMain from "@/components/headerMain";
 import {useStore} from "vuex";
 import router from "@/router";
 import {onMounted, ref} from "vue";
-import {collection, onSnapshot} from "firebase/firestore";
+import {collection, getDocs, onSnapshot} from "firebase/firestore";
 import {db} from "@/main";
 
 export default {
@@ -58,13 +58,12 @@ export default {
     }
   },
   watch: {
-    hotels () {
+    async hotels () {
       this.$store.commit('SET_HOTELS', this.hotels)
 
-      onSnapshot(collection(db, "apartments"), (querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          this.$store.commit('SET_APARTMENTS', doc.data());
-        });
+      const querySnapshot = await getDocs(collection(db, "apartments"));
+      querySnapshot.forEach((doc) => {
+        this.$store.commit('SET_APARTMENTS', doc.data());
       });
 
       router.push('/apartaments')
