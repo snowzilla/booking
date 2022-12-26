@@ -2,7 +2,7 @@
   <header-main/>
   <div class="container">
     <div class="user-list">
-      <div class="user" v-for="user in users" @click="selectUser(user.id)">
+      <div class="user" v-for="user in users" @click="selectUser(user.id)" :key="user.id">
         <div class="user-info">
           <div class="avatar"/>
           <h4>{{ user.name }}</h4>
@@ -34,7 +34,7 @@
 <script>
 import headerMain from "@/components/headerMain";
 import {computed, onMounted, ref, onUpdated} from "vue";
-import {doc, updateDoc, collection, onSnapshot, arrayUnion, getDoc} from "firebase/firestore";
+import {doc, updateDoc, collection, onSnapshot, arrayUnion, getDocs} from "firebase/firestore";
 import {db} from "@/main";
 import {useStore} from "vuex";
 import {getAuth} from "firebase/auth";
@@ -74,7 +74,7 @@ export default {
 
     const sendMessage = () => {
       const chatRef = doc(db, 'chats', selectChatId.value);
-      if (messages.value) {
+      if (message.value) {
         updateDoc(chatRef,
             {
               messages: arrayUnion({uid: getUser.value, message: message.value})
@@ -87,19 +87,24 @@ export default {
       scroll.value.scrollTop = 9999999999;
     })
 
-    onMounted(async () => {
-      onSnapshot(collection(db, "users"), (querySnapshot) => {
+    onMounted(() => {
+      onSnapshot(collection(db, "chats"), (querySnapshot) => {
+        users.value.length = 0
         querySnapshot.forEach((doc) => {
-          if (doc.data().id !== getUser.value) {
-            users.value.push(
-                {
-                  id: doc.data().id,
-                  name: doc.data().name
-                }
-            )
+          if (doc.data().users.owner === getUser.value) {
+            users.value.push({
+              id: doc.data().users.buyer,
+              name: doc.data().users.buyerName
+            })
+          } else if (doc.data().users.buyer === getUser.value) {
+            users.value.push({
+              id: doc.data().users.owner,
+              name: doc.data().users.ownerName
+            })
           }
         })
       })
+
     })
 
 
@@ -119,7 +124,7 @@ p {
 }
 
 h4 {
-  font-family: 'Alike';
+  font-family: 'Alike', serif;
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
@@ -204,7 +209,7 @@ h4 {
 .input-message {
   height: 57px;
   width: 696px;
-  font-family: 'Alike';
+  font-family: 'Alike', serif;
   font-style: normal;
   font-weight: 400;
   font-size: 20px;

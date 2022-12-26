@@ -42,7 +42,9 @@ export default {
       country: '',
       name: '',
       loading: false,
-      userId: []
+      userId: [],
+      userName: '',
+      ownerName: ''
     }
   },
   computed: {
@@ -64,11 +66,23 @@ export default {
     onSnapshot(collection(db, "chats"), (querySnapshot) => {
       querySnapshot.forEach((doc) => {
         if (doc.data().hasOwnProperty('users')) {
-          Object.values(doc.data().users).forEach(id => {
-            if (this.user.uid === id) {
-              this.userId = id
-            }
-          })
+          if (doc.data().users.owner === this.user.uid) {
+            this.userId.push(doc.data().users.owner)
+          }
+          if (doc.data().users.buyer === this.user.uid) {
+            this.userId.push(doc.data().users.buyer)
+          }
+        }
+      })
+
+    });
+
+    onSnapshot(collection(db, "users"), (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.data().id === this.user.uid) {
+          this.userName = doc.data().name
+        } else if (doc.data().id === this.item.owner) {
+          this.ownerName = doc.data().name
         }
       })
     });
@@ -83,7 +97,9 @@ export default {
             addDoc(collection(db, "chats"), {
               users: {
                 owner: this.item.owner,
-                buyer: this.user.uid
+                ownerName: this.ownerName,
+                buyer: this.user.uid,
+                buyerName: this.userName
               },
               messages: []
             });
