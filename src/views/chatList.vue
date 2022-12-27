@@ -60,13 +60,16 @@ export default {
     });
 
     const selectUser = async (id) => {
+      messages.value = null
       onSnapshot(collection(db, "chats"), (querySnapshot) => {
         querySnapshot.forEach((item) => {
-          if (item.data().users.owner === id || item.data().users.buyer === id) {
-            onSnapshot(doc(db, "chats", item.id), (doc) => {
-              selectChatId.value = doc.id
-              messages.value = doc.data().messages
-            });
+          if (item.data().users.owner === getUser.value || item.data().users.buyer === getUser.value) {
+            if (item.data().users.owner === id || item.data().users.buyer === id) {
+              onSnapshot(doc(db, "chats", item.id), (doc) => {
+                selectChatId.value = doc.id
+                messages.value = doc.data().messages
+              });
+            }
           }
         });
       })

@@ -8,15 +8,16 @@ import {
 
 import hotels from "./hotels";
 import {addDoc, collection} from "firebase/firestore";
+import createPersistedState from "vuex-persistedstate";
 
 const store = createStore({
+    plugins:[createPersistedState()],
     state: {
         user: null
     },
     mutations: {
         setUser(state, payload) {
             state.user = payload
-            console.log(state.user)
         }
     },
     actions: {

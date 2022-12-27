@@ -36,6 +36,8 @@ import router from "@/router";
 import {onMounted, ref} from "vue";
 import {collection, getDocs, onSnapshot} from "firebase/firestore";
 import {db} from "@/main";
+import {getAuth} from "firebase/auth";
+import store from "@/store";
 
 export default {
   components: {
@@ -71,24 +73,6 @@ export default {
       router.push('/apartaments')
     }
   },
-  // setup() {
-  //
-  //   let apartment = ref([])
-  //
-  //
-  //   onMounted(async () => {
-  //     onSnapshot(collection(db, "apartments"), (querySnapshot) => {
-  //       const apartments = [];
-  //       querySnapshot.forEach((doc) => {
-  //         apartments.push(doc.data());
-  //       });
-  //       apartment = apartments
-  //     });
-  //   })
-  //
-  //
-  //   return {apartment}
-  // }
 }
 
 </script>
