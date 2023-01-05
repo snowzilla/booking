@@ -63,13 +63,14 @@ export default {
         this.country = item.location.country
       }
     });
+
     onSnapshot(collection(db, "chats"), (querySnapshot) => {
       querySnapshot.forEach((doc) => {
         if (doc.data().hasOwnProperty('users')) {
-          if (doc.data().users.owner === this.user.uid) {
+          if (doc.data().users.owner === this.user?.uid) {
             this.userId.push(doc.data().users.owner)
           }
-          if (doc.data().users.buyer === this.user.uid) {
+          if (doc.data().users.buyer === this.user?.uid) {
             this.userId.push(doc.data().users.buyer)
           }
         }
@@ -79,7 +80,7 @@ export default {
 
     onSnapshot(collection(db, "users"), (querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        if (doc.data().id === this.user.uid) {
+        if (doc.data().id === this.user?.uid) {
           this.userName = doc.data().name
         } else if (doc.data().id === this.item.owner) {
           this.ownerName = doc.data().name
@@ -89,23 +90,25 @@ export default {
   },
   methods: {
     load() {
-
-      if (this.user.uid !== this.item.owner) {
-
-        if (!this.userId.length) {
-          if (this.item.apart) {
-            addDoc(collection(db, "chats"), {
-              users: {
-                owner: this.item.owner,
-                ownerName: this.ownerName,
-                buyer: this.user.uid,
-                buyerName: this.userName
-              },
-              messages: []
-            });
-            router.push("/chatList")
+      if (this.user) {
+        if (this.user.uid !== this.item.owner) {
+          if (!this.userId.length) {
+            if (this.item.apart) {
+              addDoc(collection(db, "chats"), {
+                users: {
+                  owner: this.item.owner,
+                  ownerName: this.ownerName,
+                  buyer: this.user.uid,
+                  buyerName: this.userName
+                },
+                messages: []
+              });
+              router.push("/chatList")
+            }
           }
         }
+      } else {
+        alert('Sign up to contact the owner')
       }
     }
   }

@@ -26,7 +26,7 @@
         </router-link>
         <router-link to="/profile">
           <div class="avatar">
-            {{ name.substring(0, 1) }}
+            {{ name.substring(0, 1).toUpperCase() }}
           </div>
         </router-link>
         <button @click="exit">exit</button>
@@ -103,14 +103,6 @@ a:-webkit-any-link {
   align-items: center;
 }
 
-.lang {
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  padding: 5px 10px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
 
 .avatar {
   width: 36px;
@@ -118,9 +110,10 @@ a:-webkit-any-link {
   border-radius: 100%;
   background: #FFFFFF;
   color: #1C1B1B;
-  text-align: center;
-  line-height: 30px;
-  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 25px;
 }
 
 

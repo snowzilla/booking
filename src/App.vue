@@ -20,6 +20,8 @@ a:-webkit-any-link {
 body {
   margin: 0;
   background: #1C1B1B;
+  cursor: default;
+  font-family: 'Alike', serif;
 }
 
 input {

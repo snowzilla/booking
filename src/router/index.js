@@ -69,8 +69,12 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    const currentUser = JSON.parse(localStorage.vuex).user
+    let currentUser = getAuth().currentUser
     const requireAuth = to.matched.some(record => record.meta.auth)
+
+    if (localStorage.vuex){
+        currentUser = JSON.parse(localStorage.vuex).user
+    }
 
     if (requireAuth && !currentUser) {
         next('/auth')

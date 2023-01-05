@@ -2,7 +2,7 @@
   <header-main/>
   <div class="container">
     <div class="user-list">
-      <div class="user" v-for="user in users" @click="selectUser(user.id)" :key="user.id">
+      <div class="user" v-for="user in users" :id="user.id" @click="selectUser(user.id)" :key="user.id">
         <div class="user-info">
           <div class="avatar"/>
           <h4>{{ user.name }}</h4>
@@ -60,6 +60,7 @@ export default {
     });
 
     const selectUser = async (id) => {
+      const chatUsers = document.querySelectorAll('.user')
       messages.value = null
       onSnapshot(collection(db, "chats"), (querySnapshot) => {
         querySnapshot.forEach((item) => {
@@ -72,6 +73,14 @@ export default {
             }
           }
         });
+      })
+      chatUsers.forEach(user => {
+        user.classList.remove('select')
+
+        if (user.id === id) {
+          user.classList.add('select')
+        }
+
       })
     }
 
@@ -127,11 +136,8 @@ p {
 }
 
 h4 {
-  font-family: 'Alike', serif;
-  font-style: normal;
   font-weight: 400;
   font-size: 20px;
-  line-height: 25px;
   color: #FFFFFF;
   margin: 0;
 }
@@ -232,6 +238,7 @@ h4 {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow: scroll;
 }
 
 .user {
@@ -240,6 +247,19 @@ h4 {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   padding: 11px 29px 12px 9px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.user:active{
+  box-shadow: inset 0 2px 2px #000000;
+  transition: 0.3s;
+}
+
+.select{
+  box-shadow: inset 0 4px 4px #000000;
+  transition: 0.3s;
 }
 
 .user-info {
