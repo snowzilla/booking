@@ -5,7 +5,7 @@
       <div class="profile-info">
         <div class="name">
           <p>Name:</p>
-          <h2>Sergey</h2>
+          <h2>{{user}}</h2>
         </div>
         <div class="loc">
           <p>Location:</p>
@@ -13,7 +13,7 @@
         </div>
         <div class="email">
           <p>Email:</p>
-          <h2>snowzilla1@bk.ru</h2>
+          <h2>{{ email }}</h2>
         </div>
       </div>
       <div class="buttons">
@@ -38,7 +38,7 @@
 import headerMain from "@/components/headerMain";
 import {onMounted, ref, computed, reactive} from "vue";
 import {db} from '@/main'
-import {collection, addDoc} from "firebase/firestore";
+import {collection, addDoc, onSnapshot} from "firebase/firestore";
 import {useStore} from "vuex";
 import {useVuelidate} from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
@@ -49,6 +49,8 @@ export default {
     headerMain
   },
   setup() {
+    const user = ref('')
+    const email = ref('')
     const form = reactive({
       apartName: '',
       location: '',
@@ -90,10 +92,17 @@ export default {
     }
 
     onMounted(() => {
-      console.log();
+      onSnapshot(collection(db, "users"), (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if (doc.data().id === getUser.value) {
+            user.value = doc.data().name.charAt(0).toUpperCase() + doc.data().name.slice(1);
+            email.value = JSON.parse(localStorage.vuex).user.email
+          }
+        })
+      });
     })
 
-    return {form, addApartments, getUser, show, v$, error}
+    return {form, addApartments, getUser, show, v$, error, user, email}
   }
 }
 </script>

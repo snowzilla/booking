@@ -10,7 +10,9 @@
       </div>
     </div>
     <div class="messages-window">
-      <div class="apart-info"></div>
+      <div class="apart-info">
+        <h1 v-if="!selectChatId">Choose a chat</h1>
+      </div>
       <div class="chat-window">
         <div class="messages">
           <div class="messages-list" ref="scroll">
@@ -21,7 +23,7 @@
           </div>
         </div>
         <div class="input-wrap">
-          <input type="text" class="input-message" v-model="message" @keyup.enter="sendMessage">
+          <input type="text" class="input-message" v-model="message" @keyup.enter="sendMessage" :disabled="!selectChatId">
           <div class="keyup">
             <img src="@/assets/send.jpg" alt="" class="send" @click="sendMessage">
           </div>
@@ -203,11 +205,15 @@ h4 {
   width: 100%;
   background: #1F1F1F;
   border: 1px solid rgba(106, 106, 106, 0.3);
-  filter: blur(2px);
+  /*filter: blur(2px);*/
   height: 59px;
   position: absolute;
   border-radius: 0 30px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 
 .input-wrap {
   position: absolute;
