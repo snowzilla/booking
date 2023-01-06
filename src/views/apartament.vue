@@ -104,8 +104,14 @@ export default {
                 messages: []
               });
               router.push("/chatList")
+            }else {
+              alert("it's not an apartment, but it's your choice:)")
             }
+          }else {
+            alert("it's not an apartment, but it's your choice:)")
           }
+        }else {
+          alert("this is your apartment, you've already forgotten?:)")
         }
       } else {
         alert('Sign up to contact the owner')

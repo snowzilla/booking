@@ -24,12 +24,22 @@
         <router-link to="/chatList">
           <img src='@/assets/chat.svg' alt="chat"/>
         </router-link>
-        <router-link to="/profile">
-          <div class="avatar">
-            {{ name.substring(0, 1).toUpperCase() }}
-          </div>
-        </router-link>
-        <button @click="exit">exit</button>
+        <div :class="{logOut: !login}" class="login">
+          <router-link to="/profile">
+            <div class="avatar" ref="avatar">
+            </div>
+          </router-link>
+          <button class="exit" @click="exit">exit</button>
+        </div>
+        <div :class="{logOut: login}" class="login">
+          <router-link class="sign-in" to="/login">
+            Login
+          </router-link>
+          <router-link class="sign-up" to="/signUp">
+            Sign up
+          </router-link>
+        </div>
+
       </div>
     </div>
   </div>
@@ -45,18 +55,24 @@ import router from "@/router";
 
 export default {
   setup() {
-    let name = ref('')
+    const login = ref(false)
+    const avatar = ref(null)
 
     const store = useStore()
 
     const getUser = computed(() => store.state.user)
 
+    if (getUser.value){
+      login.value = !login.value
+    }
+
     onMounted(async () => {
+
       try {
         const querySnapshot = await getDocs(collection(db, "users"));
         querySnapshot.forEach((doc) => {
           if (doc.data().id === getUser.value.uid) {
-            name.value = doc.data().name
+            avatar.value.innerHTML = doc.data().name.substring(0, 1).toUpperCase()
           }
         });
       } catch (err) {
@@ -64,13 +80,13 @@ export default {
     })
 
     const exit = async () => {
-      name.value = ''
+      login.value = !login.value
       await store.dispatch('logout')
       await router.push('/')
     }
 
 
-    return {name, exit}
+    return {name, exit, login, avatar}
   }
 
 }
@@ -116,5 +132,32 @@ a:-webkit-any-link {
   font-size: 25px;
 }
 
+
+.login{
+  display: flex;
+  gap: 10px;
+}
+
+.logOut{
+  display: none;
+}
+
+.sign-in,
+.sign-up{
+  border: 1px solid rgba(106, 106, 106, 0.3);
+  border-radius: 5px;
+  padding: 10px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.exit{
+  border: 3px solid rgba(106, 106, 106, 0.3);
+  border-radius: 5px;
+  background: none;
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 0 10px;
+  cursor: pointer;
+}
 
 </style>

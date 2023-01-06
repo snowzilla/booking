@@ -3,27 +3,14 @@
     <header-main/>
     <div class="page-info">
       <div class="filter-sort">
-        <div class="filter">
-          <h1>Filters</h1>
-          <hr>
-          <div class="price">
-            <h3>Price</h3>
-            <div class="inputs-price">
-              <input class="min" type="text" placeholder="Min">
-              <hr>
-              <input class="max" type="text" placeholder="Max">
-            </div>
-          </div>
-
-        </div>
         <div class="sort">
           <h1>Sort</h1>
           <hr>
           <div class="sort-list">
-            <div class="num-star">
+            <div class="num-star" @click="sort('stars')">
               For numbers stars
             </div>
-            <div class="min-price">
+            <div class="min-price" @click="sort('priceFrom')">
               For min price
             </div>
           </div>
@@ -89,6 +76,10 @@ import store from "@/store";
 import headerMain from "@/components/headerMain";
 import router from "@/router";
 
+function byField (field) {
+  return (a, b) => a[field] > b[field] ? 1 : -1;
+}
+
 export default {
   name: "Apartaments",
   components: {
@@ -97,16 +88,20 @@ export default {
   data() {
     return {
       stars: [],
-      modal: false
+      modal: false,
     }
   },
 
   computed: {
     hotels() {
       return store.state.hotels.hotels
-    }
+    },
   },
-  methods: {}
+  methods: {
+    sort(field) {
+      this.hotels.sort(byField(field));
+    }
+  }
 }
 </script>
 
@@ -166,7 +161,6 @@ hr {
   row-gap: 20px;
 }
 
-.filter,
 .sort {
   padding: 16px 16px 20px 16px;
   background: rgba(31, 31, 31, 0.5);
@@ -206,12 +200,6 @@ hr {
   background: #2f2f2f;
 }
 
-.hotel-modal {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
 
 .hotel-header {
   display: flex;
@@ -273,18 +261,6 @@ hr {
 .num-star:active,
 .min-price:active {
   transform: scale(0.9, 0.9);
-}
-
-.min,
-.max {
-  width: 80px;
-  padding: 0;
-  text-align: center;
-}
-
-.inputs-price {
-  display: flex;
-  margin-top: 8px;
 }
 
 .inputs-price hr {

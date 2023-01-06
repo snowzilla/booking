@@ -50,13 +50,13 @@ const routes = [
         component: profile,
     },
     {
-        path: '/registration',
-        name: 'registration',
+        path: '/signUp',
+        name: 'signUp',
         component: registration,
     },
     {
-        path: '/auth',
-        name: 'auth',
+        path: '/login',
+        name: 'login',
         component: auth,
     },
 
@@ -77,7 +77,7 @@ router.beforeEach((to, from, next) => {
     }
 
     if (requireAuth && !currentUser) {
-        next('/auth')
+        next('/login')
     } else {
         next()
     }

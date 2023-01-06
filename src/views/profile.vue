@@ -78,7 +78,8 @@ export default {
           location: {
             name: form.location,
             country: 'Russia'
-          }
+          },
+          stars: 5
         });
         form.apartName = ''
         form.price = ''
